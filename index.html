@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Turnos de Entrega</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #FCE20061 0%, #fce200 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: #4a5568;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            color: #718096;
+            font-size: 1.1rem;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+            padding: 25px;
+            background: rgba(247, 250, 252, 0.8);
+            border-radius: 15px;
+            border-left: 5px solid #fce200;
+            transition: all 0.3s ease;
+        }
+
+        .form-section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            color: #2d3748;
+            margin-bottom: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title::before {
+            content: "📋";
+            margin-right: 10px;
+            font-size: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-row-three {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #4a5568;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .required {
+            color: #e53e3e;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #fce200;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .service-type {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .service-option {
+            padding: 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            background: white;
+        }
+
+        .service-option:hover {
+            border-color: #fce200;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(252, 226, 0, 0.2);
+        }
+
+        .service-option.selected {
+            border-color: #fce200;
+            background: #fce200;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(252, 226, 0, 0.3);
+        }
+
+        .service-option h4 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .service-option .price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #000000;
+            margin: 10px 0;
+        }
+
+        .service-option .details {
+            font-size: 0.9rem;
+            color: #718096;
+            line-height: 1.4;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 5px solid;
+        }
+
+        .alert-warning {
+            background: rgba(255, 193, 7, 0.1);
+            color: #856404;
+            border-color: #ffc107;
+        }
+
+        .alert-info {
+            background: rgba(23, 162, 184, 0.1);
+            color: #0c5460;
+            border-color: #17a2b8;
+        }
+
+        .alert-success {
+            background: rgba(40, 167, 69, 0.1);
+            color: #155724;
+            border-color: #28a745;
+        }
+
+        .documents-info {
+            background: linear-gradient(135deg, rgba(252, 226, 0, 0.38) 0%, rgba(252, 226, 0, 0.38) 100%);
+            border: 2px solid rgba(252, 226, 0, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .documents-info h4 {
+            color: #4a5568;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .documents-info h4::before {
+            content: "📧";
+            margin-right: 10px;
+            font-size: 1.4rem;
+        }
+
+        .documents-list {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .documents-list ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .documents-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #fce200;
+            display: flex;
+            align-items: center;
+        }
+
+        .documents-list li:last-child {
+            border-bottom: none;
+        }
+
+        .documents-list li::before {
+            content: "✓";
+            background: #000000;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #000000 0%, #000000 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn:disabled {
+            background: #gray;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .summary {
+            background: rgba(102, 126, 234, 0.05);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            .form-row, .form-row-three, .service-type {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="https://fenix.laarcourier.com/operaciones/imgs/logo-dark.png" width="300" />
+            <h1>🚚 Registro de Turnos de Entrega</h1>
+            <p>Complete todos los campos requeridos para agendar su turno de entrega</p>
+        </div>
+
+        <form id="deliveryForm">
+            <!-- Información del Solicitante-->
+            <div class="form-section">
+                <h3 class="section-title">Información del Solicitante</h3>
+                <div class="form-group">
+                    <label for="email">Correo Electrónico del Solicitante<span class="required">*</span></label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="clientName">Nombre del Solicitante<span class="required">*</span></label>
+                        <input type="text" id="clientName" name="clientName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Teléfono del solicitante<span class="required">*</span></label>
+                        <input type="tel" id="phone" name="phone" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Información del Envío -->
+            <div class="form-section">
+                <h3 class="section-title">Información del Envío</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="destinationCompany">Nombre de la Empresa / Institución destino <span class="required">*</span></label>
+                        <input type="text" id="destinationCompany" name="destinationCompany" required placeholder="Empresa XYZ">
+                    </div>
+                    <div class="form-group">
+                        <label for="guideNumber">Número de Guía <span class="required">*</span></label>
+                        <input type="text" id="guideNumber" name="guideNumber" required placeholder="Ej: LC12345678">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="numberOfBoxes">Número de Cajas <span class="required">*</span></label>
+                    <input type="number" id="numberOfBoxes" name="numberOfBoxes" required min="1" placeholder="Ej: 5">
+                </div>
+                <div class="form-row-three">
+                    <div class="form-group">
+                        <label for="city">Ciudad <span class="required">*</span></label>
+                        <input type="text" id="city" name="city" required placeholder="Ej: Quito">
+                    </div>
+                    <div class="form-group">
+                        <label for="deliveryDate">Fecha de Entrega <span class="required">*</span></label>
+                        <input type="date" id="deliveryDate" name="deliveryDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="deliveryTime">Hora de Entrega <span class="required">*</span></label>
+                        <input type="time" id="deliveryTime" name="deliveryTime" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tipo de Servicio -->
+            <div class="form-section">
+                <h3 class="section-title">Tipo de Servicio</h3>
+                <div class="alert alert-warning">
+                    <strong>⚠️ Importante:</strong> Revise cuidadosamente los tiempos de anticipación requeridos para cada tipo de servicio.
+                </div>
+                
+                <div class="service-type">
+                    <div class="service-option" data-service="standard" onclick="selectService('standard')">
+                        <h4>🚛 Entrega con Turno Estándar / Dedicada</h4>
+                         <div class="details">
+                            • 4 horas de servicio<br>
+                            • 1 courier incluido<br>
+                            • Camión de 3.5 toneladas<br>
+                            • Dentro de cobertura<br>
+                            <strong>Anticipación: 24 horas antes de las 10:00 AM</strong>
+                        </div>
+                    </div>
+                    
+                    <div class="service-option" data-service="certified" onclick="selectService('certified')">
+                        <h4>❄️ Entrega con Turno Certificada BPADT</h4>
+                        <div class="details">
+                            • 4 horas de servicio<br>
+                            • 1 courier incluido<br>
+                            • Camión de 3.5 toneladas<br>
+                            • Control de temperatura<br>
+                            <strong>Anticipación: 48 horas antes de las 10:00 AM</strong>
+                        </div>
+                    </div>
+                </div>
+                
+                <input type="hidden" id="serviceType" name="serviceType" required>
+                <input type="hidden" id="servicePrice" name="servicePrice">
+            </div>
+
+            <!-- Documentos Habilitantes -->
+            <div class="form-section">
+                <h3 class="section-title">Documentos Habilitantes</h3>
+                
+                <div class="documents-info">
+                    <h4>Instrucciones para Envío de Documentos</h4>
+                    <p style="margin-bottom: 15px; color: #4a5568; line-height: 1.6;">
+                        Una vez que envíe este formulario, recibirá un <strong>correo de confirmación</strong>. 
+                        Debe responder a ese correo adjuntando los siguientes documentos obligatorios:
+                    </p>
+                    
+                    <div class="documents-list">
+                        <ul>
+                            <li><strong>Orden de Compra</strong> - Documento original en formato PDF</li>
+                            <li><strong>Factura</strong> - Factura correspondiente al envío en formato PDF</li>
+                            <li><strong>Documento de Turno</strong> - Turno oficial en formato PDF</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="alert alert-success">
+                        <strong>✅ Proceso:</strong> 
+                        1️⃣ Complete este formulario → 
+                        2️⃣ Reciba correo de confirmación → 
+                        3️⃣ Responda con documentos adjuntos → 
+                        4️⃣ Su turno será procesado
+                    </div>
+                </div>
+            </div>
+
+            <!-- Información Adicional -->
+            <div class="form-section">
+                <h3 class="section-title">Información Adicional</h3>
+                <div class="form-group">
+                    <label for="specialInstructions">Instrucciones Especiales <span class="required">*</span></label>
+                    <textarea id="specialInstructions" name="specialInstructions" rows="4" placeholder="Indique cualquier instrucción especial para la entrega..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="contactPerson">Persona de Contacto en Destino <span class="required">*</span></label>
+                    <input type="text" id="contactPerson" name="contactPerson" placeholder="Nombre de quien recibirá" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="contactPhone">Teléfono de Contacto en Destino <span class="required">*</span></label>
+                    <input type="tel" id="contactPhone" name="contactPhone" placeholder="Teléfono de contacto" required>
+                </div>
+            </div>
+
+            <!-- Resumen -->
+            <div id="summary" class="summary" style="display: none;">
+                <h3>📋 Resumen del Turno</h3>
+                <div id="summaryContent"></div>
+            </div>
+
+            <button type="submit" class="submit-btn">🚚 Agendar Turno de Entrega</button>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script>
+        // Inicializar EmailJS
+        (function(){
+            emailjs.init("drrQQ4At0s-1TvzNY");
+        })();
+        
+        let selectedService = null;
+
+        // Configurar fecha mínima y restricciones de hora
+        function updateMinDate() {
+            const today = new Date();
+            const deliveryDateInput = document.getElementById('deliveryDate');
+            const deliveryTimeInput = document.getElementById('deliveryTime');
+            
+            if (selectedService === 'standard') {
+                const minDate = new Date(today.getTime() + 24 * 60 * 60 * 1000);
+                deliveryDateInput.min = minDate.toISOString().split('T')[0];
+                deliveryTimeInput.min = "10:00";
+            } else if (selectedService === 'certified') {
+                const minDate = new Date(today.getTime() + 48 * 60 * 60 * 1000);
+                deliveryDateInput.min = minDate.toISOString().split('T')[0];
+                deliveryTimeInput.min = "00:00";
+            }
+        }
+
+        function selectService(serviceType) {
+            // Remover selección anterior
+            document.querySelectorAll('.service-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // Seleccionar nuevo servicio
+            const selectedOption = document.querySelector(`[data-service="${serviceType}"]`);
+            selectedOption.classList.add('selected');
+            
+            selectedService = serviceType;
+            document.getElementById('serviceType').value = serviceType;
+            
+            if (serviceType === 'standard') {
+                document.getElementById('servicePrice').value = '80';
+            } else {
+                document.getElementById('servicePrice').value = '85';
+            }
+            
+            updateMinDate();
+            updateSummary();
+        }
+
+
+// Función utilitaria para formatear fechas a DD/MM/AAAA
+function formatDateToDDMMYYYY(dateString) {
+    if (!dateString) return 'No especificada';
+    
+    const dateObj = new Date(dateString);
+    const day = String(dateObj.getDate()).padStart(2, '0');
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+    const year = dateObj.getFullYear();
+    
+    return `${day}/${month}/${year}`;
+}
+
+// Función updateSummary actualizada
+function updateSummary() {
+    const summary = document.getElementById('summary');
+    const summaryContent = document.getElementById('summaryContent');
+    
+    const formData = new FormData(document.getElementById('deliveryForm'));
+    
+    if (selectedService && formData.get('guideNumber') && formData.get('destinationCompany')) {
+        const serviceName = selectedService === 'standard' ? 'Entrega con Turno Estándar' : 'Entrega Certificada BPADT';
+        const price = selectedService === 'standard' ? '$80.00 + IVA' : '$85.00 + IVA';
+        
+        summaryContent.innerHTML = `
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div>
+                    <strong>📧 Correo del solicitante:</strong> ${formData.get('email') || 'No especificado'}<br>
+                    <strong>👤 Nombre:</strong> ${formData.get('clientName') || 'No especificado'}<br>
+                    <strong>📦 Guía:</strong> ${formData.get('guideNumber')}<br>
+                    <strong>🏢 Empresa destino:</strong> ${formData.get('destinationCompany')}<br>
+                    <strong>🏙️ Ciudad:</strong> ${formData.get('city') || 'No especificada'}
+                </div>
+                <div>
+                    <strong>📦 Cajas:</strong> ${formData.get('numberOfBoxes') || '0'}<br>
+                    <strong>📅 Fecha:</strong> ${formatDateToDDMMYYYY(formData.get('deliveryDate'))}<br>
+                    <strong>⏰ Hora:</strong> ${formData.get('deliveryTime') || 'No especificada'}<br>
+                    <strong>🚛 Servicio:</strong> ${serviceName}<br>
+                    <strong>💰 Precio:</strong> ${price}
+ 	<em style="font-size: 0.85em; color: #666;">*Este valor es referencial y puede variar según el tonelaje del camión requerido, la cantidad de horas de trabajo y los recursos necesarios para completar el servicio</em>
+                </div>
+            </div>
+        `;
+        
+        summary.style.display = 'block';
+    } else {
+        summary.style.display = 'none';
+    }
+}
+            
+
+        // Actualizar resumen en tiempo real
+        document.getElementById('deliveryForm').addEventListener('input', updateSummary);
+        document.getElementById('deliveryForm').addEventListener('change', updateSummary);
+
+// Validación del formulario
+function validateDeliveryDateTime() {
+    const deliveryDateInput = document.getElementById('deliveryDate').value;
+    const deliveryTime = document.getElementById('deliveryTime').value;
+    const now = new Date();
+    
+    if (!deliveryTime || !deliveryDateInput) return false;
+    
+    // Construir correctamente la fecha de entrega
+    const deliveryDate = new Date(deliveryDateInput + 'T' + deliveryTime + ':00');
+    
+    // Debug: mostrar información para depurar
+    console.log('Fecha actual:', now);
+    console.log('Input fecha:', deliveryDateInput);
+    console.log('Input hora:', deliveryTime);
+    console.log('Fecha de entrega construida:', deliveryDate);
+    
+    // Verificar que la fecha sea válida
+    if (isNaN(deliveryDate.getTime())) {
+        alert('⚠️ Fecha u hora inválida.');
+        return false;
+    }
+    
+    // Crear fecha límite para solicitudes (hoy a las 10:00 AM)
+    const todayAt10AM = new Date(now);
+    todayAt10AM.setHours(10, 0, 0, 0);
+    
+    // Calcular si la solicitud se está haciendo después de las 10:00 AM de hoy
+    const isAfter10AM = now > todayAt10AM;
+    
+    if (selectedService === 'standard') {
+        // Para entregas estándar: siempre mínimo 24 horas de anticipación
+        const hoursDiff = (deliveryDate - now) / (1000 * 60 * 60);
+        
+        // Debug: mostrar información para depurar
+        console.log('Horas de diferencia:', hoursDiff);
+        
+        if (hoursDiff < 24) {
+            alert('⚠️ Para el servicio estándar debe agendar con mínimo 24 horas de anticipación.');
+            return false;
+        }
+        
+        // Validación adicional para horarios mínimos de entrega
+        const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+        tomorrow.setHours(0, 0, 0, 0);
+        
+        // Resetear las horas de deliveryDate para comparación de fechas
+        const deliveryDateOnly = new Date(deliveryDate);
+        deliveryDateOnly.setHours(0, 0, 0, 0);
+        
+        if (deliveryDateOnly.getTime() === tomorrow.getTime()) {
+            // Si es para mañana (día siguiente)
+            if (!isAfter10AM && deliveryDate.getHours() < 10) {
+                // Solicitud antes de las 10:00 AM para mañana: entrega mínimo a las 10:00 AM
+                alert('⚠️ Para entregas del día siguiente, el horario mínimo es a las 10:00 AM.');
+                return false;
+            } else if (isAfter10AM) {
+                // Solicitud después de las 10:00 AM para mañana: NO permitido
+                alert('⚠️ Para entregas del día siguiente, debe hacer la solicitud antes de las 10:00 AM del día anterior.');
+                return false;
+            }
+        }
+        
+    } else if (selectedService === 'certified') {
+        // Para entregas certificadas: mínimo 48 horas de anticipación
+        const hoursDiff = (deliveryDate - now) / (1000 * 60 * 60);
+        
+        if (hoursDiff < 48) {
+            alert('⚠️ Para el servicio certificado debe agendar con mínimo 48 horas de anticipación.');
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+     // Función sendEmail actualizada
+function sendEmail(formData) {
+    const serviceName = selectedService === 'standard' ? 'Entrega con Turno Estándar' : 'Entrega Certificada BPADT';
+    const servicePrice = selectedService === 'standard' ? '$80.00 + IVA' : '$85.00 + IVA';
+    
+    const templateParams = {
+        client_email: formData.get('email'),
+        client_name: formData.get('clientName'),
+        client_phone: formData.get('phone'),
+        
+        guideNumber: formData.get('guideNumber'),
+        destinationCompany: formData.get('destinationCompany'),
+        city: formData.get('city'),
+        numberOfBoxes: formData.get('numberOfBoxes'),
+        deliveryDate: formatDateToDDMMYYYY(formData.get('deliveryDate')),
+        deliveryTime: formData.get('deliveryTime'),
+        
+        serviceType: serviceName,
+        servicePrice: servicePrice,
+        
+        contactPerson: formData.get('contactPerson'),
+        contactPhone: formData.get('contactPhone'),
+        specialInstructions: formData.get('specialInstructions'),
+        
+        request_date: new Date().toLocaleString('es-ES', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        })
+    };       
+            console.log('Enviando email con parámetros:', templateParams);
+            
+            emailjs.send('service_09dcb42', 'template_bzi1dor', templateParams)
+                .then(function(response) {
+                    console.log('Email enviado exitosamente!', response.status, response.text);
+                    
+                    alert('✅ ¡Turno ingresado exitosamente!\n\n' +
+                          '📧 Hemos enviado la información a nuestro equipo\n' +
+                          '📨 Recibirá un correo de confirmación\n' +
+                          '📎 IMPORTANTE: Debe responder al correo de confirmación adjuntando:\n' +
+                          '   • Orden de Compra\n' +
+                          '   • Factura\n' +
+                          '   • Documento de Turno\n' +
+                          '   • Otros documentos de ser necesarios\n' +
+                          '📞 Nos contactaremos con usted dentro de las próximas horas');
+                    
+                    // Limpiar formulario
+                    document.getElementById('deliveryForm').reset();
+                    selectedService = null;
+                    document.querySelectorAll('.service-option').forEach(option => {
+                        option.classList.remove('selected');
+                    });
+                    document.getElementById('summary').style.display = 'none';
+                })
+                .catch(function(error) {
+                    console.error('Error al enviar email:', error);
+                    alert('❌ Error al enviar el correo. Por favor, intente nuevamente o contacte al soporte.');
+                });
+        }
+
+        // Evento submit del formulario
+        document.getElementById('deliveryForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!selectedService) {
+                alert('⚠️ Por favor seleccione un tipo de servicio.');
+                return;
+            }
+            
+            const dateValue = document.getElementById('deliveryDate').value;
+            const timeValue = document.getElementById('deliveryTime').value;
+            
+            if (!dateValue || !timeValue) {
+                alert('⚠️ Por favor seleccione fecha y hora de entrega.');
+                return;
+            }
+            
+            if (!validateDeliveryDateTime()) {
+                return;
+            }
+            
+            if (confirm('¿Está seguro de que desea enviar la solicitud de turno?\n\n' +
+                       'RECUERDE: Después de enviar recibirá un correo de confirmación.\n' +
+                       'Debe responder a ese correo adjuntando todos los documentos requeridos.')) {
+                
+                const formData = new FormData(this);
+                
+                const submitBtn = document.querySelector('.submit-btn');
+                const originalText = submitBtn.textContent;
+                submitBtn.textContent = '📤 Enviando...';
+                submitBtn.disabled = true;
+                
+                sendEmail(formData);
+                
+                setTimeout(() => {
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
+                }, 3000);
+            }
+        });
+
+        // Configurar fecha mínima inicial
+        const today = new Date();
+        const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000);
+        document.getElementById('deliveryDate').min = tomorrow.toISOString().split('T')[0];
+    </script>
+</body>
+</html>
